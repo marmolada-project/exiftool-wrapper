@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "exiftool-wrapper"
 version = "0.1.0"
-description = ""
+description = "A lightweight wrapper for exiftool"
 authors = ["Nils Philippsen <nils@tiptoe.de>"]
 license = "LGPL-3.0-or-later"
 
