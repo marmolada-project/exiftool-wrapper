@@ -13,6 +13,7 @@ pillow = "^9.0.1 || ^10.0.0"
 pytest = "^6.2.5 || ^7.0.0 || ^8.0.0"
 pytest-cov = "^2.12.1"
 coverage = "^7.3.0"
+toml = "^0.10.2"
 
 [tool.pytest.ini_options]
 addopts = "--cov-config .coveragerc --cov=exiftool_wrapper --cov-report=term --cov-report=xml --cov-report=html"
