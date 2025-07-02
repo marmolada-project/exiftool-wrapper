@@ -1,8 +1,9 @@
 import json
 import os
 import subprocess
+from collections.abc import Sequence
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Sequence, Union
+from typing import Any
 
 
 class ExifToolWrapper:
@@ -11,7 +12,7 @@ class ExifToolWrapper:
     SENTINEL = b"{ready}"
     SENTINEL_LEN = len(SENTINEL)
 
-    def __init__(self, common_args: Optional[Sequence[str]] = None):
+    def __init__(self, common_args: Sequence[str] | None = None):
         self.common_args = common_args
 
     @property
@@ -42,7 +43,7 @@ class ExifToolWrapper:
             for arg in args
         ]
 
-    def process(self, *args: Union[str, bytes, Path], encoding: str = "utf-8") -> bytes:
+    def process(self, *args: str | bytes | Path, encoding: str = "utf-8") -> bytes:
         args = (str(arg) if isinstance(arg, Path) else arg for arg in args)
         self.pipe.stdin.write(
             b"\n".join(self._encode_args(args, encoding=encoding)) + b"\n-execute\n"
@@ -59,11 +60,9 @@ class ExifToolWrapper:
         return output.rstrip()[: -self.SENTINEL_LEN]
 
     def process_json_many(
-        self, *args: Union[str, bytes, Path], encoding: str = "utf-8"
-    ) -> List[Dict[str, Any]]:
+        self, *args: str | bytes | Path, encoding: str = "utf-8"
+    ) -> list[dict[str, Any]]:
         return json.loads(self.process("-j", *args).decode("utf-8"))
 
-    def process_json(
-        self, path: Union[str, bytes, Path], encoding: str = "utf-8"
-    ) -> Dict[str, Any]:
+    def process_json(self, path: str | bytes | Path, encoding: str = "utf-8") -> dict[str, Any]:
         return self.process_json_many(path, encoding=encoding)[0]
