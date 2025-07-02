@@ -7,7 +7,7 @@ name = "exiftool-wrapper"
 version = "0.1.1"
 description = "A lightweight wrapper for exiftool"
 authors = [{ name = "Nils Philippsen", email = "nils@tiptoe.de" }]
-requires-python = ">=3.8.0,<4"
+requires-python = ">=3.12.0,<4"
 license = "LGPL-3.0-or-later"
 
 [dependency-groups]
@@ -27,6 +27,7 @@ flake8-max-line-length = 100
 
 [tool.ruff]
 line-length = 100
+target-version = "py312"
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "UP", "S", "B", "RUF"]
