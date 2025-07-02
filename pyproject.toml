@@ -18,15 +18,23 @@ dev = [
     "coverage>=7.3.0,<8",
     "toml>=0.10.2,<0.11",
     "pytest-xdist>=3.6.1",
+    "ruff>=0.12.1",
 ]
 
 [tool.pytest.ini_options]
 addopts = "--cov-config .coveragerc --cov=exiftool_wrapper --cov-report=term --cov-report=xml --cov-report=html"
 flake8-max-line-length = 100
 
-[tool.isort]
-line_length=100
-profile="black"
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "S", "B", "RUF"]
+allowed-confusables = ["’"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["S101", "RUF012"]
+"**/__init__.py" = ["F401"]
 
 [tool.black]
 line-length=100
