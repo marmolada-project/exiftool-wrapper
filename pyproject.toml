@@ -1,19 +1,24 @@
-[tool.poetry]
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
 name = "exiftool-wrapper"
 version = "0.1.1"
 description = "A lightweight wrapper for exiftool"
-authors = ["Nils Philippsen <nils@tiptoe.de>"]
+authors = [{ name = "Nils Philippsen", email = "nils@tiptoe.de" }]
+requires-python = ">=3.8.0,<4"
 license = "LGPL-3.0-or-later"
 
-[tool.poetry.dependencies]
-python = "^3.8.0"
-
-[tool.poetry.group.dev.dependencies]
-pillow = "^9.0.1 || ^10.0.0 || ^11.0.0"
-pytest = "^6.2.5 || ^7.0.0 || ^8.0.0"
-pytest-cov = "^2.12.1 || ^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0"
-coverage = "^7.3.0"
-toml = "^0.10.2"
+[dependency-groups]
+dev = [
+    "pillow>=9.0.1,<12",
+    "pytest>=6.2.5,<9",
+    "pytest-cov>=2.12.1,<7",
+    "coverage>=7.3.0,<8",
+    "toml>=0.10.2,<0.11",
+    "pytest-xdist>=3.6.1",
+]
 
 [tool.pytest.ini_options]
 addopts = "--cov-config .coveragerc --cov=exiftool_wrapper --cov-report=term --cov-report=xml --cov-report=html"
@@ -25,7 +30,3 @@ profile="black"
 
 [tool.black]
 line-length=100
-
-[build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
