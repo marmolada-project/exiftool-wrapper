@@ -6,7 +6,6 @@ from typing import Any, Dict, List, Optional, Sequence, Union
 
 
 class ExifToolWrapper:
-
     PROGRAM = "exiftool"
     BLOCKSIZE = 4096
     SENTINEL = b"{ready}"
@@ -27,7 +26,7 @@ class ExifToolWrapper:
             args.append("-common_args")
             args.extend(self.common_args)
 
-        pipe = subprocess.Popen(
+        pipe = subprocess.Popen(  # noqa: S603
             args,
             stdin=subprocess.PIPE,
             stdout=subprocess.PIPE,

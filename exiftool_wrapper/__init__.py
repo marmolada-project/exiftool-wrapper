@@ -1,1 +1,1 @@
-from .wrapper import ExifToolWrapper  # noqa: F401
+from .wrapper import ExifToolWrapper
