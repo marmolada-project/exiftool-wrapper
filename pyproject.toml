@@ -19,11 +19,13 @@ dev = [
     "toml>=0.10.2,<0.11",
     "pytest-xdist>=3.6.1",
     "ruff>=0.12.1",
+    "pytest-asyncio>=1.0.0",
 ]
 
 [tool.pytest.ini_options]
 addopts = "--cov-config .coveragerc --cov=exiftool_wrapper --cov-report=term --cov-report=xml --cov-report=html"
-flake8-max-line-length = 100
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
 
 [tool.ruff]
 line-length = 100

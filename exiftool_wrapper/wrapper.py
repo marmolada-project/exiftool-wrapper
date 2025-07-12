@@ -1,3 +1,4 @@
+import asyncio
 import json
 import os
 import subprocess
@@ -66,3 +67,15 @@ class ExifToolWrapper:
 
     def process_json(self, path: str | bytes | Path, encoding: str = "utf-8") -> dict[str, Any]:
         return self.process_json_many(path, encoding=encoding)[0]
+
+    async def process_json_many_async(
+        self, *args: str | bytes | Path, encoding: str = "utf-8"
+    ) -> list[dict[str, Any]]:
+        return await asyncio.get_running_loop().run_in_executor(
+            None, lambda: self.process_json_many(*args, encoding=encoding)
+        )
+
+    async def process_json_async(
+        self, path: str | bytes | Path, encoding: str = "utf-8"
+    ) -> dict[str, Any]:
+        return (await self.process_json_many_async(path, encoding=encoding))[0]
