@@ -57,3 +57,12 @@ class TestExifToolWrapper:
         wrapper = ExifToolWrapper(common_args=["-G"])
         exifdata = wrapper.process_json(image_file)
         assert exifdata["EXIF:ImageDescription"] == "A comment"
+
+    async def test_process_json_async(self, image_file):
+        """Test `ExifToolWrapper.process_json_async()`.
+
+        This also tests `ExifToolWrapper.process_many_json_async()`.
+        """
+        wrapper = ExifToolWrapper(common_args=["-G"])
+        exifdata = await wrapper.process_json_async(image_file)
+        assert exifdata["EXIF:ImageDescription"] == "A comment"
