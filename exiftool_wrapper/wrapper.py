@@ -33,6 +33,10 @@ class ExifToolWrapper:
 
         return pipe
 
+    @cached_property
+    def _async_lock(self) -> asyncio.Lock:
+        return asyncio.Lock()
+
     @staticmethod
     def _encode_args(args, *, encoding: str):
         return [
@@ -67,9 +71,10 @@ class ExifToolWrapper:
     async def process_json_many_async(
         self, *args: str | bytes | Path, encoding: str = "utf-8"
     ) -> list[dict[str, Any]]:
-        return await asyncio.get_running_loop().run_in_executor(
-            None, lambda: self.process_json_many(*args, encoding=encoding)
-        )
+        async with self._async_lock:
+            return await asyncio.get_running_loop().run_in_executor(
+                None, lambda: self.process_json_many(*args, encoding=encoding)
+            )
 
     async def process_json_async(
         self, path: str | bytes | Path, encoding: str = "utf-8"

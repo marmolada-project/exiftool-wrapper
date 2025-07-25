@@ -1,3 +1,4 @@
+import asyncio
 from pathlib import Path
 from typing import Any
 from unittest import mock
@@ -103,6 +104,21 @@ class TestExifToolWrapper:
         wrapper = ExifToolWrapper(common_args=["-G"])
 
         results = await wrapper.process_json_many_async(*images)
+
+        for num, exifdata in enumerate(results, start=1):
+            assert exifdata["EXIF:ImageDescription"] == f"A comment #{num}"
+
+    async def test_process_json_async_concurrently(self, tmp_path):
+        """Test running `ExifToolWrapper.process_json_async()` concurrently."""
+        images = [
+            create_image_file(
+                tmp_path, f"file{num}.jpg", tags={"ImageDescription": f"A comment #{num}"}
+            )
+            for num in range(1, 101)
+        ]
+        wrapper = ExifToolWrapper(common_args=["-G"])
+
+        results = await asyncio.gather(*(wrapper.process_json_async(image) for image in images))
 
         for num, exifdata in enumerate(results, start=1):
             assert exifdata["EXIF:ImageDescription"] == f"A comment #{num}"
