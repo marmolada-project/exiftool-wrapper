@@ -3,6 +3,7 @@ import json
 import os
 import subprocess
 from collections.abc import Sequence
+from functools import cached_property
 from pathlib import Path
 from typing import Any
 
@@ -16,13 +17,8 @@ class ExifToolWrapper:
     def __init__(self, common_args: Sequence[str] | None = None):
         self.common_args = common_args
 
-    @property
-    def pipe(self) -> subprocess.Popen:
-        if not hasattr(self, "_pipe"):
-            self._pipe = self._create_pipe()
-        return self._pipe
-
-    def _create_pipe(self) -> subprocess.Popen:
+    @cached_property
+    def _pipe(self) -> subprocess.Popen:
         args = [self.PROGRAM, "-stay_open", "True", "-@", "-"]
         if self.common_args:
             args.append("-common_args")
@@ -46,12 +42,12 @@ class ExifToolWrapper:
 
     def process(self, *args: str | bytes | Path, encoding: str = "utf-8") -> bytes:
         args = (str(arg) if isinstance(arg, Path) else arg for arg in args)
-        self.pipe.stdin.write(
+        self._pipe.stdin.write(
             b"\n".join(self._encode_args(args, encoding=encoding)) + b"\n-execute\n"
         )
-        self.pipe.stdin.flush()
+        self._pipe.stdin.flush()
 
-        fd = self.pipe.stdout.fileno()
+        fd = self._pipe.stdout.fileno()
         output = b""
 
         sentinel_check_index = -self.SENTINEL_LEN - 2
