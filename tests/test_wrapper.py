@@ -1,3 +1,5 @@
+from pathlib import Path
+from typing import Any
 from unittest import mock
 
 import pytest
@@ -8,15 +10,22 @@ from exiftool_wrapper.wrapper import ExifToolWrapper
 TAG_NAMES_TO_IDS = {value: key for key, value in ExifTags.TAGS.items()}
 
 
-@pytest.fixture
-def image_file(tmp_path):
-    img_path = tmp_path / "image.jpg"
-    img = Image.new("RGB", (32, 32))
+def create_image_file(
+    parent_dir: Path, fname: str, tags: dict[str, Any], dims: (int, int) = (32, 32)
+) -> Path:
+    img_path = parent_dir / fname
+    img = Image.new("RGB", dims)
     exif = img.getexif()
-    exif[TAG_NAMES_TO_IDS["ImageDescription"]] = "A comment"
+    for name, value in tags.items():
+        exif[TAG_NAMES_TO_IDS[name]] = value
     img.save(img_path, exif=exif)
 
-    yield img_path
+    return img_path
+
+
+@pytest.fixture
+def image_file(tmp_path):
+    yield create_image_file(tmp_path, "image.jpg", tags={"ImageDescription": "A comment"})
 
 
 class TestExifToolWrapper:
@@ -52,13 +61,27 @@ class TestExifToolWrapper:
     def test_process_json(self, image_file):
         """Test `ExifToolWrapper.process_json()`.
 
-        This also tests `ExifToolWrapper.process()`,
-        `ExifToolWrapper.process_many_json()` and
+        This also tests `ExifToolWrapper.process()` and
         `ExifToolWrapper._encode_args`.
         """
         wrapper = ExifToolWrapper(common_args=["-G"])
         exifdata = wrapper.process_json(image_file)
         assert exifdata["EXIF:ImageDescription"] == "A comment"
+
+    def test_process_json_many(self, tmp_path):
+        """Test `ExifToolWrapper.process_json_many()`"""
+        images = [
+            create_image_file(
+                tmp_path, f"file{num}.jpg", tags={"ImageDescription": f"A comment #{num}"}
+            )
+            for num in range(1, 6)
+        ]
+        wrapper = ExifToolWrapper(common_args=["-G"])
+
+        results = wrapper.process_json_many(*images)
+
+        for num, exifdata in enumerate(results, start=1):
+            assert exifdata["EXIF:ImageDescription"] == f"A comment #{num}"
 
     async def test_process_json_async(self, image_file):
         """Test `ExifToolWrapper.process_json_async()`.
@@ -68,3 +91,18 @@ class TestExifToolWrapper:
         wrapper = ExifToolWrapper(common_args=["-G"])
         exifdata = await wrapper.process_json_async(image_file)
         assert exifdata["EXIF:ImageDescription"] == "A comment"
+
+    async def test_process_json_many_async(self, tmp_path):
+        """Test `ExifToolWrapper.process_json_many_async()`"""
+        images = [
+            create_image_file(
+                tmp_path, f"file{num}.jpg", tags={"ImageDescription": f"A comment #{num}"}
+            )
+            for num in range(1, 6)
+        ]
+        wrapper = ExifToolWrapper(common_args=["-G"])
+
+        results = await wrapper.process_json_many_async(*images)
+
+        for num, exifdata in enumerate(results, start=1):
+            assert exifdata["EXIF:ImageDescription"] == f"A comment #{num}"
