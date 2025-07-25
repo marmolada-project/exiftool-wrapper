@@ -20,10 +20,12 @@ def image_file(tmp_path):
 
 
 class TestExifToolWrapper:
-    @pytest.mark.parametrize("with_common_args", (True, False))
+    @pytest.mark.parametrize(
+        "with_common_args", (True, False), ids=("with-common-args", "without-common-args")
+    )
     @mock.patch("subprocess.Popen")
-    def test_pipe(self, Popen, with_common_args):
-        """Test the `ExifToolWrapper.pipe` property."""
+    def test__pipe(self, Popen, with_common_args):
+        """Test the `ExifToolWrapper._pipe` property."""
         Popen.return_value = sentinel = object()
 
         if with_common_args:
@@ -33,9 +35,9 @@ class TestExifToolWrapper:
 
         wrapper = ExifToolWrapper(common_args=common_args)
 
-        assert wrapper.pipe == sentinel
+        assert wrapper._pipe is sentinel
         # test that pipe is only created once
-        assert wrapper.pipe == sentinel
+        assert wrapper._pipe is sentinel
 
         Popen.assert_called_once()
         (popen_args,), kwargs = Popen.call_args
