@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "exiftool-wrapper"
-version = "0.2.0"
+version = "0.2.1"
 description = "A lightweight wrapper for exiftool"
 authors = [{ name = "Nils Philippsen", email = "nils@tiptoe.de" }]
 requires-python = ">=3.12.0,<4"
