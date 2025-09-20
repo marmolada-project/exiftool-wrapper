@@ -50,7 +50,7 @@ class TestExifToolWrapper:
         assert wrapper._pipe is sentinel
 
         Popen.assert_called_once()
-        (popen_args,), kwargs = Popen.call_args
+        (popen_args,), _ = Popen.call_args
         if with_common_args:
             common_args_opt_idx_start = popen_args.index("-common_args") + 1
             common_args_opt_idx_end = common_args_opt_idx_start + len(common_args)
