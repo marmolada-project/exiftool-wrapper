@@ -65,8 +65,12 @@ class ExifToolWrapper:
     ) -> list[dict[str, Any]]:
         return json.loads(self.process("-j", *args).decode("utf-8"))
 
-    def process_json(self, path: str | bytes | Path, encoding: str = "utf-8") -> dict[str, Any]:
-        return self.process_json_many(path, encoding=encoding)[0]
+    def process_json(
+        self, path: str | bytes | Path, *, args: Sequence[str] = (), encoding: str = "utf-8"
+    ) -> dict[str, Any]:
+        assert all(arg.startswith("-") for arg in args)  # noqa: S101
+        args = (*tuple(args), path)
+        return self.process_json_many(*args, encoding=encoding)[0]
 
     async def process_json_many_async(
         self, *args: str | bytes | Path, encoding: str = "utf-8"
@@ -77,6 +81,8 @@ class ExifToolWrapper:
             )
 
     async def process_json_async(
-        self, path: str | bytes | Path, encoding: str = "utf-8"
+        self, path: str | bytes | Path, *, args: Sequence[str] = (), encoding: str = "utf-8"
     ) -> dict[str, Any]:
-        return (await self.process_json_many_async(path, encoding=encoding))[0]
+        assert all(arg.startswith("-") for arg in args)  # noqa: S101
+        args = (*tuple(args), path)
+        return (await self.process_json_many_async(*args, encoding=encoding))[0]
