@@ -69,7 +69,8 @@ class TestExifToolWrapper:
         exifdata = wrapper.process_json(image_file, args=["-n"])
         assert exifdata["EXIF:ImageDescription"] == "A comment"
 
-    def test_process_json_many(self, tmp_path):
+    @pytest.mark.parametrize("encoding", ("utf-8", "ascii"))
+    def test_process_json_many(self, encoding, tmp_path):
         """Test `ExifToolWrapper.process_json_many()`"""
         images = [
             create_image_file(
@@ -79,7 +80,7 @@ class TestExifToolWrapper:
         ]
         wrapper = ExifToolWrapper(common_args=["-G"])
 
-        results = wrapper.process_json_many(*images)
+        results = wrapper.process_json_many(*images, encoding=encoding)
 
         for num, exifdata in enumerate(results, start=1):
             assert exifdata["EXIF:ImageDescription"] == f"A comment #{num}"
