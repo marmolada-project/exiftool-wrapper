@@ -63,7 +63,7 @@ class ExifToolWrapper:
     def process_json_many(
         self, *args: str | bytes | Path, encoding: str = "utf-8"
     ) -> list[dict[str, Any]]:
-        return json.loads(self.process("-j", *args).decode("utf-8"))
+        return json.loads(self.process("-j", *args).decode(encoding))
 
     def process_json(
         self, path: str | bytes | Path, *, args: Sequence[str] = (), encoding: str = "utf-8"
