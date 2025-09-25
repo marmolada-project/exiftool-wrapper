@@ -66,7 +66,7 @@ class TestExifToolWrapper:
         `ExifToolWrapper._encode_args`.
         """
         wrapper = ExifToolWrapper(common_args=["-G"])
-        exifdata = wrapper.process_json(image_file)
+        exifdata = wrapper.process_json(image_file, args=["-n"])
         assert exifdata["EXIF:ImageDescription"] == "A comment"
 
     def test_process_json_many(self, tmp_path):
